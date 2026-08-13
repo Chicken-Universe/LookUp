@@ -13,8 +13,8 @@ document.getElementById('lookupForm').addEventListener('submit', async function 
     statusEl.textContent = 'Sedang mengirim ke Langflow AI...';
     statusEl.className = 'text-sm text-indigo-400';
 
-    const FLOW_ID = '21dc957d-a4de-4337-980a-bfc028f2511e';
-    const LANGFLOW_API_KEY = 'sk-GqZ7JVrCaqnhZlNzGa6wqsPrp8akiCFXEx2xwgfK7hY';
+    const FLOW_ID = 'FLOW_ID';
+    const LANGFLOW_API_KEY = 'LANGFLOW_API_KEY';
     const LANGFLOW_URL = `http://127.0.0.1:7860/api/v1/run/${FLOW_ID}?stream=false`;
 
     try {
