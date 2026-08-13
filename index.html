@@ -7,6 +7,8 @@
   <title>LookUp AI Test Input</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script
+    src="https://cdn.jsdelivr.net/gh/langflow-ai/langflow-embedded-chat@v1.0.8/dist/build/static/js/bundle.min.js"></script>
   <style>
     body {
       background: radial-gradient(circle at top, rgba(99, 102, 241, 0.2), transparent 36%),
@@ -16,6 +18,9 @@
 </head>
 
 <body class="min-h-screen text-slate-100 antialiased">
+  <langflow-chat window_title="LookUp (1)" flow_id="21dc957d-a4de-4337-980a-bfc028f2511e"
+    host_url="http://127.0.0.1:7860">
+  </langflow-chat>
   <div class="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-4 py-8">
     <div
       class="w-full rounded-3xl border border-slate-700/80 bg-slate-950/80 p-8 shadow-2xl shadow-slate-900/50 backdrop-blur-xl">
