@@ -1,69 +1,51 @@
-const SUPABASE_URL = 'https://qidnvwyagidmnlafsaer.supabase.co/';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFpZG52d3lhZ2lkbW5sYWZzYWVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ0NDMyNTAsImV4cCI6MjEwMDAxOTI1MH0.BF1QZhrLf9N4TNewm8wuM6cGoUHZK7-F3erMkKZM0cI';
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+document.getElementById('lookupForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
 
-const form = document.getElementById('lookupForm');
-const promptPreview = document.getElementById('promptPreview');
-const status = document.getElementById('status');
+  const statusEl = document.getElementById('status');
+  const previewEl = document.getElementById('promptPreview');
+  const destinationTarget = document.getElementById('destinationTarget').value;
+  const destinationCountry = document.getElementById('destinationCountry').value;
+  const cameraGear = document.getElementById('cameraGear').value;
+  const shootingTarget = document.getElementById('shootingTarget').value;
+  const formattedPrompt = `Target Lokasi: ${destinationTarget}, ${destinationCountry}\nGear/Kamera: ${cameraGear}\nTujuan Pemotretan: ${shootingTarget}`;
 
-const buildPrompt = (target, country, gear, purpose) => {
-    return `Destination Target: ${target}\nDestination Country: ${country}\nPhone / Gear Camera: ${gear}\nPurpose: ${purpose}`;
-};
+  previewEl.textContent = formattedPrompt;
+  statusEl.textContent = 'Sedang mengirim ke Langflow AI...';
+  statusEl.className = 'text-sm text-indigo-400';
+  
+  const FLOW_ID = 'da898c00-3f1a-4bdf-a9e7-5a51b38b4b73';
+  const LANGFLOW_API_KEY = 'LANGFLOW_ID'; // Wajib genti
+  const LANGFLOW_URL = `http://127.0.0.1:7860/api/v1/run/${FLOW_ID}?stream=false`;
 
-form.addEventListener('input', () => {
-    const target = form.destinationTarget.value.trim();
-    const country = form.destinationCountry.value.trim();
-    const gear = form.cameraGear.value.trim();
-    const purpose = form.shootingTarget.value.trim();
-    promptPreview.textContent = buildPrompt(target || 'Please Input', country || 'Please Input', gear || 'Please Input', purpose || 'Please Input');
-});
+  try {
+    const response = await fetch(LANGFLOW_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': LANGFLOW_API_KEY
+      },
+      body: JSON.stringify({
+        input_value: formattedPrompt,
+        output_type: 'chat',
+        input_type: 'chat',
+        tweaks: {}
+      })
+    });
 
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const target = form.destinationTarget.value.trim();
-    const country = form.destinationCountry.value.trim();
-    const gear = form.cameraGear.value.trim();
-    const purpose = form.shootingTarget.value.trim();
-
-    if (!target || !country || !gear || !purpose) {
-        status.textContent = 'Please fill in all fields first.';
-        status.classList.add('text-rose-400');
-        return;
+    if (!response.ok) {
+      throw new Error(`Server Error: ${response.status}`);
     }
 
-    status.textContent = 'Data is ready to be sent to the AI...';
-    status.classList.remove('text-rose-400');
-    status.classList.add('text-emerald-300');
+    const data = await response.json();
+    const aiResult = data.outputs[0].outputs[0].results.message.text;
 
-    const { data, error } = await supabaseClient
-        .from('user_requests')
-        .insert([
-            {
-                destinationTarget: target,
-                destinationCountry: country,
-                cameraGear: gear,
-                shootingTarget: purpose
-            }
-        ])
-        .select();
+    previewEl.textContent = aiResult;
+    statusEl.textContent = 'Selesai!';
+    statusEl.className = 'text-sm text-emerald-400';
 
-    if (error) {
-        console.error('Error Supabase:', error.message);
-        status.textContent = 'Failed to save data: ' + error.message;
-        status.classList.add('text-rose-400');
-        return;
-    }
-
-    const payload = {
-        destinationTarget: target,
-        destinationCountry: country,
-        cameraGear: gear,
-        shootingTarget: purpose,
-        promptText: buildPrompt(target, country, gear, purpose),
-    };
-
-    console.log('AI payload:', payload);
-    status.textContent = 'Input on Progress: Data has been sent to the AI successfully (soon to be processed)';
+  } catch (error) {
+    console.error('Error saat menghubungi Langflow:', error);
+    statusEl.textContent = 'Gagal menghubungi AI. Pastikan server Langflow berjalan.';
+    statusEl.className = 'text-sm text-rose-400';
+  }
 });
-
-form.dispatchEvent(new Event('input'));
