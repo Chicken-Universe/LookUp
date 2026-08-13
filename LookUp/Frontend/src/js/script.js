@@ -7,7 +7,7 @@ const promptPreview = document.getElementById('promptPreview');
 const status = document.getElementById('status');
 
 const buildPrompt = (target, country, gear, purpose) => {
-    return `Destination Target: ${target}\nDestination Country: ${country}\nPhone / Gear Camera: ${gear}\nPurpose: ${purpose}\n\nUse this information to generate a detailed AI prompt for photography recommendations.`;
+    return `Destination Target: ${target}\nDestination Country: ${country}\nPhone / Gear Camera: ${gear}\nPurpose: ${purpose}`;
 };
 
 form.addEventListener('input', () => {
