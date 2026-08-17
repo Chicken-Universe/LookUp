@@ -4,4 +4,4 @@ node_modules/
 venv/
 .venv/
 
-backend/_pycache_/
+backend/__pycache__/
