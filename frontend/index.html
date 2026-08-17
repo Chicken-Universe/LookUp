@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LookUp | Astrophotography AI Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        spaceBg: '#09090B',
+                        cardBg: 'rgba(255, 255, 255, 0.03)',
+                        accentPurple: '#A855F7',
+                        accentViolet: '#6B21A8',
+                        accentCyan: '#06B6D4'
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="p-6 md:p-12">
+
+    <!-- Header -->
+    <header class="max-w-6xl mx-auto mb-10 text-center">
+        <h1
+            class="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
+            LookUp
+        </h1>
+        <p class="text-gray-400 mt-2 text-sm md:text-base">Autonomous AI Astrophotography Spot & Exposure Engine</p>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Input Form Section (4 Cols) -->
+        <section class="lg:col-span-4">
+            <div class="glass-panel p-6 rounded-2xl">
+                <h2 class="text-xl font-bold mb-6 text-purple-300 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4">
+                        </path>
+                    </svg>
+                    Parameters
+                </h2>
+
+                <form id="lookupForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Your Location</label>
+                        <div class="flex gap-2 items-center">
+                            <input type="text" id="yourLocation" required placeholder="e.g. Malang"
+                                class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-purple-500 transition">
+                            <button type="button" id="gpsBtn"
+                                class="shrink-0 bg-white/5 border border-white/10 hover:border-cyan-400/60 text-xs text-cyan-200 px-3 py-2 rounded-lg transition">
+                                Current Location
+                            </button>
+                        </div>
+                        <p id="gpsStatus" class="mt-2 text-[10px] text-gray-400 hidden">Using current GPS location...
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Country</label>
+                        <input type="text" id="country" required placeholder="e.g. Indonesia" readonly
+                            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-purple-500 transition cursor-not-allowed opacity-70">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Radius (km)</label>
+                        <input type="number" id="radius" required value="30" min="5" max="200"
+                            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-purple-500 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Shooting Purpose</label>
+                        <select id="shootingPurpose"
+                            class="w-full bg-neutral-900 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-purple-500 transition">
+                            <option value="Static Photo">Static Photo (Milky Way / Constellations)</option>
+                            <option value="Lighttrails">Light Trails & Star Trails</option>
+                            <option value="Video (30 FPS)">Video (30 FPS)</option>
+                            <option value="Video (60 FPS)">Video (60 FPS)</option>
+                            <option value="Timelapse">Timelapse Sequence</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-300 uppercase mb-1">Camera Gear</label>
+                        <input type="text" id="cameraGear" required placeholder="e.g. Sony A7 III or iPhone 15 Pro"
+                            class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-purple-500 transition">
+                    </div>
+
+                    <button type="submit" id="submitBtn"
+                        class="w-full mt-4 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-bold py-3 rounded-lg text-sm tracking-wide shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
+                        <span>Discover Best Spots</span>
+                    </button>
+
+                    <button type="button" id="stopAiBtn"
+                        class="w-full mt-3 bg-red-600/80 hover:bg-red-500 text-white font-bold py-3 rounded-lg text-sm tracking-wide shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
+                        <span>Stop AI & Exit</span>
+                    </button>
+                    <p id="stopStatus" class="mt-2 text-[10px] text-gray-400 hidden">Stopping AI engine...</p>
+                </form>
+            </div>
+        </section>
+
+        <!-- Output Cards Section (8 Cols) -->
+        <section class="lg:col-span-8 space-y-6">
+            <div id="loadingState" class="hidden glass-panel p-12 rounded-2xl text-center">
+                <div
+                    class="inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-purple-500 mb-4">
+                </div>
+                <p class="text-gray-300 font-medium">Analyzing Satellite Weather & Light Pollution Data...</p>
+                <p class="text-xs text-gray-500 mt-1">Calculating exposure triangles via local Ollama LLM</p>
+            </div>
+
+            <div id="placeholderState" class="glass-panel p-12 rounded-2xl text-center">
+                <svg class="w-16 h-16 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                    </path>
+                </svg>
+                <h3 class="text-lg font-bold text-gray-300">No Target Selected</h3>
+                <p class="text-sm text-gray-500 mt-1">Fill in parameters on the left to reveal optimal shooting
+                    locations.</p>
+            </div>
+
+            <div id="resultsContainer" class="space-y-6"></div>
+        </section>
+
+    </main>
+
+    <script src="script.js" defer></script>
+</body>
+
+</html>
