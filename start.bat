@@ -128,11 +128,11 @@ echo.
 echo =======================================================
 echo  LOOKUP WEB SERVICE STARTED SUCCESSFULLY!             
 echo =======================================================
-echo  Browser will automatically open at localhost:8000     
+echo  Browser will automatically open at 127.0.0.1:8000     
 echo =======================================================
 echo.
 
-start "" http://localhost:8000
+start "" http://127.0.0.1:8000/
 python backend/main.py
 if exist "venv" (
     rd /s /q "venv"
